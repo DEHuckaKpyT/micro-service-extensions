@@ -35,7 +35,7 @@ dependencies {
     //endregion database
 
     // region local
-    api(project(":micro-service-core"))
-    api(project(":exposed-extensions"))
+    implementation(project(":micro-service-core"))
+    implementation(project(":exposed-extensions"))
     // endregion local
 }
