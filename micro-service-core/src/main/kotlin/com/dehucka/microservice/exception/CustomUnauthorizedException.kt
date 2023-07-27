@@ -7,4 +7,4 @@ package com.dehucka.microservice.exception
  *
  * @author Denis Matytsin
  */
-open class CustomException(message: String) : RuntimeException(message)
+class CustomUnauthorizedException(message: String) : CustomException(message)

@@ -143,3 +143,11 @@ val shortMapper = ObjectMapper().apply { shortMapperConfig() }
 fun String.toUUID(): UUID {
     return UUID.fromString(this)
 }
+
+data class ValueDto<ValueT>(
+    val value: ValueT
+)
+
+fun <T1> suspend(block: suspend (T1) -> Unit): suspend (T1) -> Unit {
+    return block
+}

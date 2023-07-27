@@ -1,7 +1,5 @@
-
 rootProject.name = "micro-service-extensions"
-include("eureka-extensions")
-include("telegram-bot")
 include("micro-service-core")
+include("eureka-extensions")
 include("exposed-extensions")
 include("test-extensions")

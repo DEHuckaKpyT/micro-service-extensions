@@ -1,8 +1,10 @@
 package com.dehucka.exposed.ext
 
+import com.dehucka.exposed.data.Page
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.statements.BatchInsertStatement
@@ -25,10 +27,24 @@ suspend inline fun <T> read(crossinline block: () -> T): T =
         }
     }
 
+suspend inline fun <R, Arg> read(argument: Arg, crossinline block: Arg.() -> R): R =
+    withContext(Dispatchers.IO) {
+        transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = true) {
+            argument.block()
+        }
+    }
+
 suspend inline fun <T> execute(crossinline block: () -> T): T =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = false) {
             block()
+        }
+    }
+
+suspend inline fun <R, Arg> execute(argument: Arg, crossinline block: Arg.() -> R): R =
+    withContext(Dispatchers.IO) {
+        transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = false) {
+            argument.block()
         }
     }
 
@@ -38,6 +54,23 @@ suspend inline fun <T> executeStrictly(crossinline block: () -> T): T =
             block()
         }
     }
+
+suspend inline fun <R, Arg> executeStrictly(argument: Arg, crossinline block: Arg.() -> R): R =
+    withContext(Dispatchers.IO) {
+        transaction(Connection.TRANSACTION_SERIALIZABLE, repetitionAttempts = 0, readOnly = false) {
+            argument.block()
+        }
+    }
+
+fun <T> SizedIterable<T>.toPage(page: Long, size: Int): Page<T> {
+    val offset = page * size
+    val items = limit(size, offset).toList()
+
+    val totalItems = count()
+    val lastPage = if (size != 0) totalItems / size else 0
+
+    return Page(items, totalItems, lastPage)
+}
 
 /**
  * Example:
