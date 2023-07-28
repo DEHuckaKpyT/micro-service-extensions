@@ -22,7 +22,7 @@ nexusStaging {
 }
 
 allprojects {
-    group = "io.github.DEHuckaKpyT"
+    group = "io.github.dehuckakpyt"
     version = "0.1-SNAPSHOT"
 }
 
