@@ -5,25 +5,26 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("io.codearte.nexus-staging") version ("0.30.0")
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-}
-
-nexusStaging {
-    serverUrl = "https://s01.oss.sonatype.org/service/local/"
-    username = project.properties["ossrh-username"].toString()
-    password = project.properties["ossrh-password"].toString()
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0-rc-1"
 }
 
 allprojects {
     group = "io.github.dehuckakpyt"
     version = "0.1.2-SNAPSHOT"
+}
+
+nexusPublishing {
+    packageGroup.set(project.group as String)
+
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            username.set(project.properties["sonatypeUsername"].toString())
+            password.set(project.properties["sonatypePassword"].toString())
+        }
+    }
 }
 
 subprojects {
@@ -70,8 +71,8 @@ subprojects {
                         val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                         url = if (version.toString().endsWith("SNAPSHOT")) snapshotsUrl else releasesUrl
                         credentials {
-                            username = project.properties["ossrh-username"].toString()
-                            password = project.properties["ossrh-password"].toString()
+                            username = project.properties["sonatypeUsername"].toString()
+                            password = project.properties["sonatypePassword"].toString()
                         }
                     }
                 }
