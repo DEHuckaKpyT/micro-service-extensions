@@ -3,10 +3,7 @@ package com.dehucka.exposed.ext
 import com.dehucka.exposed.data.Page
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.SizedIterable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.BatchInsertStatement
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -71,6 +68,11 @@ fun <T> SizedIterable<T>.toPage(page: Long, size: Int): Page<T> {
 
     return Page(items, totalItems, lastPage)
 }
+
+class InsensitiveLikeOp(expr1: Expression<*>, expr2: Expression<*>) : ComparisonOp(expr1, expr2, "ILIKE")
+
+infix fun <T : String?> ExpressionWithColumnType<T>.ilike(pattern: String): Op<Boolean> =
+    InsensitiveLikeOp(this, QueryParameter(pattern, columnType))
 
 /**
  * Example:

@@ -23,7 +23,7 @@ nexusStaging {
 
 allprojects {
     group = "io.github.dehuckakpyt"
-    version = "0.1-SNAPSHOT"
+    version = "0.1.2-SNAPSHOT"
 }
 
 subprojects {
