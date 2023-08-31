@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
     group = "io.github.dehuckakpyt"
-    version = "0.1.2-SNAPSHOT"
+    version = "0.1.3-SNAPSHOT"
 }
 
 nexusPublishing {
@@ -87,8 +87,8 @@ subprojects {
     java {
         withJavadocJar()
         withSourcesJar()
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     tasks.test {
@@ -96,7 +96,7 @@ subprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets.main {

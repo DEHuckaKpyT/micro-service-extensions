@@ -1,5 +1,7 @@
 package com.dehucka.microservice.ext
 
+import com.fasterxml.jackson.core.json.JsonReadFeature
+import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -116,12 +118,9 @@ val client: HttpClient by lazy {
 val mapper = ObjectMapper().apply { mapperConfig() }
 
 val shortMapperConfig: ObjectMapper.() -> Unit = {
-    configure(SerializationFeature.INDENT_OUTPUT, true)
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
-        indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
-        indentObjectsWith(DefaultIndenter("  ", "\n"))
-    })
+    configure(JsonWriteFeature.QUOTE_FIELD_NAMES.mappedFeature(), false)
+    configure(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES.mappedFeature(), true)
     dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
     registerModule(JavaTimeModule())  // support java.time.* types

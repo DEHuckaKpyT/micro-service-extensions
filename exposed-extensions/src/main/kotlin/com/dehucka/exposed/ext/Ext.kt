@@ -69,10 +69,10 @@ fun <T> SizedIterable<T>.toPage(page: Long, size: Int): Page<T> {
     return Page(items, totalItems, lastPage)
 }
 
-class InsensitiveLikeOp(expr1: Expression<*>, expr2: Expression<*>) : ComparisonOp(expr1, expr2, "ILIKE")
+class InsensitiveLikeOp(expr1: Expression<*>, expr2: Expression<*>) : ComparisonOp(expr1, expr2, "LIKE")
 
 infix fun <T : String?> ExpressionWithColumnType<T>.ilike(pattern: String): Op<Boolean> =
-    InsensitiveLikeOp(this, QueryParameter(pattern, columnType))
+    InsensitiveLikeOp(this.lowerCase(), QueryParameter(pattern.lowercase(), columnType))
 
 /**
  * Example:
