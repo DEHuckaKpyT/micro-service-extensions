@@ -1,5 +1,6 @@
 package com.dehucka.eureka.plugin
 
+import com.dehucka.eureka.exception.handler.FeignExceptionHandler
 import com.dehucka.eureka.plugin.config.EurekaConfig
 import com.netflix.appinfo.ApplicationInfoManager
 import com.netflix.appinfo.InstanceInfo
@@ -7,9 +8,12 @@ import com.netflix.appinfo.PropertiesInstanceConfig
 import com.netflix.appinfo.providers.EurekaConfigBasedInstanceInfoProvider
 import com.netflix.discovery.DefaultEurekaClientConfig
 import com.netflix.discovery.DiscoveryClient
+import com.netflix.discovery.EurekaClient
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*
 import io.ktor.server.config.*
+import org.koin.core.context.loadKoinModules
+import org.koin.dsl.module
 
 
 /**
@@ -30,6 +34,11 @@ val EurekaClient = createApplicationPlugin(name = "eureka-client", "eureka", { E
     val applicationInfoManager = ApplicationInfoManager(instanceConfig, instanceInfo)
 
     val eurekaClient = DiscoveryClient(applicationInfoManager, eurekaClientConfig)
+
+    loadKoinModules(module {
+        single<EurekaClient> { eurekaClient }
+        single<FeignExceptionHandler> { pluginConfig.feign.exceptionHandler }
+    })
 
     fun startEureka() {
         applicationInfoManager.setInstanceStatus(InstanceInfo.InstanceStatus.UP)

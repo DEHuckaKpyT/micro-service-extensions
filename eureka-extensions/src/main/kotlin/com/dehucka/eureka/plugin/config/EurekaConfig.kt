@@ -1,5 +1,7 @@
 package com.dehucka.eureka.plugin.config
 
+import com.dehucka.eureka.exception.handler.DefaultFeignExceptionHandler
+import com.dehucka.eureka.exception.handler.FeignExceptionHandler
 import io.ktor.server.config.*
 
 
@@ -23,12 +25,20 @@ data class EurekaConfig(private val config: ApplicationConfig) {
         config.propertyOrNull("server.registry-fetch-interval-seconds")?.getString()?.toInt()
     )
 
+    val feign = EurekaFeignConfig(
+        exceptionHandler = DefaultFeignExceptionHandler()
+    )
+
     inline fun client(block: EurekaClientConfig.() -> Unit) {
         client.apply(block)
     }
 
     inline fun server(block: EurekaServerConfig.() -> Unit) {
         server.apply(block)
+    }
+
+    inline fun feign(block: EurekaFeignConfig.() -> Unit) {
+        feign.apply(block)
     }
 }
 
@@ -42,4 +52,8 @@ data class EurekaServerConfig(
     var serviceUrl: String,
     var initialInstanceInfoReplicationIntervalSeconds: Int? = null,
     var registryFetchIntervalSeconds: Int? = null
+)
+
+data class EurekaFeignConfig(
+    var exceptionHandler: FeignExceptionHandler
 )

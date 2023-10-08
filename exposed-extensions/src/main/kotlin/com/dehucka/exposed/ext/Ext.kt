@@ -17,42 +17,42 @@ import java.sql.Connection
  *
  * @author Denis Matytsin
  */
-suspend inline fun <T> read(crossinline block: () -> T): T =
+suspend inline fun <T> readQuery(crossinline block: () -> T): T =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = true) {
             block()
         }
     }
 
-suspend inline fun <R, Arg> read(argument: Arg, crossinline block: Arg.() -> R): R =
+suspend inline fun <R, Arg> readQuery(argument: Arg, crossinline block: Arg.() -> R): R =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = true) {
             argument.block()
         }
     }
 
-suspend inline fun <T> execute(crossinline block: () -> T): T =
+suspend inline fun <T> executeQuery(crossinline block: () -> T): T =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = false) {
             block()
         }
     }
 
-suspend inline fun <R, Arg> execute(argument: Arg, crossinline block: Arg.() -> R): R =
+suspend inline fun <R, Arg> executeQuery(argument: Arg, crossinline block: Arg.() -> R): R =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_READ_COMMITTED, repetitionAttempts = 0, readOnly = false) {
             argument.block()
         }
     }
 
-suspend inline fun <T> executeStrictly(crossinline block: () -> T): T =
+suspend inline fun <T> executeStrictlyQuery(crossinline block: () -> T): T =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_SERIALIZABLE, repetitionAttempts = 0, readOnly = false) {
             block()
         }
     }
 
-suspend inline fun <R, Arg> executeStrictly(argument: Arg, crossinline block: Arg.() -> R): R =
+suspend inline fun <R, Arg> executeStrictlyQuery(argument: Arg, crossinline block: Arg.() -> R): R =
     withContext(Dispatchers.IO) {
         transaction(Connection.TRANSACTION_SERIALIZABLE, repetitionAttempts = 0, readOnly = false) {
             argument.block()
